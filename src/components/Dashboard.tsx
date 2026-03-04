@@ -198,54 +198,54 @@ export default function Dashboard() {
       }}
     >
       {/* Top Bar */}
-      <header className="flex items-center justify-between px-3 md:px-4 py-2 bg-[#0a0e16] border-b border-cyan-500/10 shrink-0">
-        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+      <header className="flex items-center justify-between px-2 md:px-4 py-1.5 md:py-2 bg-[#0a0e16] border-b border-cyan-500/10 shrink-0">
+        <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
           <div className="relative shrink-0">
-            <Shield size={22} className="text-cyan-400 md:w-6 md:h-6" />
-            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <Shield size={18} className="text-cyan-400 md:w-6 md:h-6" />
+            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 md:w-2 md:h-2 bg-green-500 rounded-full animate-pulse" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-base md:text-lg font-bold tracking-wide truncate">
+            <h1 className="text-sm md:text-lg font-bold tracking-wide truncate">
               <span className="text-cyan-400">VISOR</span>
-              <span className="text-gray-500 text-[10px] md:text-xs ml-1 md:ml-2 font-mono hidden sm:inline">GLOBAL CONFLICT MONITOR</span>
+              <span className="text-gray-500 text-[9px] md:text-xs ml-1 md:ml-2 font-mono hidden sm:inline">GLOBAL CONFLICT MONITOR</span>
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 md:gap-2 shrink-0">
+        <div className="flex items-center gap-0.5 md:gap-2 shrink-0">
           <button
             onClick={handleToggleMarket}
-            className={`flex items-center gap-1 md:gap-1.5 px-1.5 md:px-3 py-1.5 rounded-md border transition-all text-[9px] md:text-xs font-mono min-h-[40px] md:min-h-0 ${
+            className={`flex items-center gap-0.5 md:gap-1.5 px-1 md:px-3 py-1 md:py-1.5 rounded border transition-all text-[8px] md:text-xs font-mono min-h-[36px] md:min-h-0 ${
               marketOpen
                 ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-400'
                 : 'border-cyan-500/20 hover:bg-cyan-500/10 text-cyan-400'
             }`}
           >
-            <BarChart3 size={13} />
-            MARKET
+            <BarChart3 size={12} className="md:w-3 md:h-3" />
+            <span className="hidden sm:inline">MARKET</span>
           </button>
           <button
             onClick={handleToggleIntel}
-            className={`flex items-center gap-1 md:gap-1.5 px-1.5 md:px-3 py-1.5 rounded-md border transition-all text-[9px] md:text-xs font-mono min-h-[40px] md:min-h-0 ${
+            className={`flex items-center gap-0.5 md:gap-1.5 px-1 md:px-3 py-1 md:py-1.5 rounded border transition-all text-[8px] md:text-xs font-mono min-h-[36px] md:min-h-0 ${
               intelOpen
                 ? 'border-amber-400/40 bg-amber-500/10 text-amber-400'
                 : 'border-cyan-500/20 hover:bg-cyan-500/10 text-cyan-400'
             }`}
           >
-            <FileWarning size={13} />
-            INTEL
+            <FileWarning size={12} className="md:w-3 md:h-3" />
+            <span className="hidden sm:inline">INTEL</span>
             {criticalCount > 0 && (
-              <span className="w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-bold">
+              <span className="w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-red-500 text-white text-[8px] md:text-[9px] flex items-center justify-center font-bold">
                 {criticalCount}
               </span>
             )}
           </button>
-          <span className="text-[9px] text-gray-500 font-mono hidden sm:inline" title="Refresh every 60s; +5 events every 4 min">60s · +5/4m</span>
+          <span className="text-[8px] text-gray-500 font-mono hidden sm:inline" title="Refresh every 60s; +5 events every 4 min">60s · +5/4m</span>
           <button
             onClick={() => fetchData(true)}
-            className={`p-2 rounded-md border border-cyan-500/20 hover:bg-cyan-500/10 transition-all min-w-[40px] min-h-[40px] md:min-w-0 md:min-h-0 flex items-center justify-center shrink-0 ${isRefreshing ? 'animate-spin' : ''}`}
+            className={`p-1.5 md:p-2 rounded border border-cyan-500/20 hover:bg-cyan-500/10 transition-all min-w-[36px] min-h-[36px] md:min-w-0 md:min-h-0 flex items-center justify-center shrink-0 ${isRefreshing ? 'animate-spin' : ''}`}
           >
-            <RefreshCw size={16} className="text-cyan-400 md:w-3.5 md:h-3.5" />
+            <RefreshCw size={14} className="text-cyan-400 md:w-3.5 md:h-3.5" />
           </button>
         </div>
       </header>
@@ -260,30 +260,30 @@ export default function Dashboard() {
           w-full md:w-96
           ${mobileTab !== 'events' ? 'hidden md:flex' : 'flex'}
         `}>
-          <div className="p-2 md:p-3 space-y-2 border-b border-white/5">
+          <div className="p-1.5 md:p-3 space-y-1.5 md:space-y-2 border-b border-white/5">
             <div className="relative">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+              <Search size={12} className="absolute left-2.5 md:left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
                 type="text"
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2.5 md:py-2 bg-white/5 border border-white/10 rounded-lg text-base md:text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 focus:ring-1 focus:ring-cyan-500/20 transition-all"
+                className="w-full pl-7 md:pl-9 pr-2 md:pr-3 py-2 md:py-2 bg-white/5 border border-white/10 rounded-lg text-sm md:text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 focus:ring-1 focus:ring-cyan-500/20 transition-all"
               />
             </div>
             <RegionFilter selected={regionFilter} onChange={setRegionFilter} eventCounts={eventCounts} />
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gray-500 font-mono">{filteredEvents.length} events</span>
+              <span className="text-[9px] md:text-[10px] text-gray-500 font-mono">{filteredEvents.length} events</span>
               <button
                 onClick={() => setSortOrder(s => s === 'newest' ? 'severity' : 'newest')}
-                className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-cyan-400 transition-colors font-mono"
+                className="flex items-center gap-0.5 text-[9px] md:text-[10px] text-gray-500 hover:text-cyan-400 transition-colors font-mono"
               >
                 {sortOrder === 'newest' ? <ChevronDown size={10} /> : <ChevronUp size={10} />}
                 Sort: {sortOrder === 'newest' ? 'Latest' : 'Severity'}
               </button>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-2 md:p-3 space-y-2 custom-scrollbar overscroll-contain">
+          <div className="flex-1 overflow-y-auto p-1.5 md:p-3 space-y-1.5 md:space-y-2 custom-scrollbar overscroll-contain">
             {filteredEvents.map(event => (
               <EventCard
                 key={event.id}
@@ -302,14 +302,14 @@ export default function Dashboard() {
         `}>
           <Globe events={data.events} onSelectEvent={handleSelectEvent} selectedEvent={selectedEvent} />
 
-          <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-2 md:p-3 backdrop-blur-md">
-            <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Global Threat Level</div>
+          <div className="absolute top-1.5 right-1.5 md:top-4 md:right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-1.5 md:p-3 backdrop-blur-md">
+            <div className="text-[9px] md:text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-0.5 md:mb-1">Global Threat Level</div>
             <div className="flex items-center gap-2">
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map(i => (
                   <div
                     key={i}
-                    className={`w-4 h-6 rounded-sm ${
+                    className={`w-3 h-4 md:w-4 md:h-6 rounded-sm ${
                       i <= (data.stats.criticalAlerts >= 3 ? 5 : data.stats.criticalAlerts >= 2 ? 4 : 3)
                         ? i <= 2 ? 'bg-yellow-500' : i <= 4 ? 'bg-orange-500' : 'bg-red-500'
                         : 'bg-gray-700'
@@ -317,7 +317,7 @@ export default function Dashboard() {
                   />
                 ))}
               </div>
-              <span className="text-sm font-bold text-orange-400 font-mono">ELEVATED</span>
+              <span className="text-xs md:text-sm font-bold text-orange-400 font-mono">ELEVATED</span>
             </div>
           </div>
 
@@ -378,27 +378,27 @@ export default function Dashboard() {
       </div>
 
       {/* Mobile bottom tab bar */}
-      <nav className="md:hidden flex items-center justify-around py-2 px-4 bg-[#0a0e16] border-t border-cyan-500/10 shrink-0 safe-area-bottom">
+      <nav className="md:hidden flex items-center justify-around py-1.5 px-2 bg-[#0a0e16] border-t border-cyan-500/10 shrink-0 safe-area-bottom">
         <button
           onClick={() => setMobileTab('events')}
-          className={`flex flex-col items-center gap-0.5 py-2 px-4 min-w-[72px] rounded-lg transition-colors ${mobileTab === 'events' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
+          className={`flex flex-col items-center gap-0 py-1.5 px-3 min-w-[64px] rounded-lg transition-colors touch-manipulation ${mobileTab === 'events' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
         >
-          <List size={22} />
-          <span className="text-[10px] font-mono">Events</span>
+          <List size={20} />
+          <span className="text-[9px] font-mono">Events</span>
         </button>
         <button
           onClick={() => setMobileTab('globe')}
-          className={`flex flex-col items-center gap-0.5 py-2 px-4 min-w-[72px] rounded-lg transition-colors ${mobileTab === 'globe' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
+          className={`flex flex-col items-center gap-0 py-1.5 px-3 min-w-[64px] rounded-lg transition-colors touch-manipulation ${mobileTab === 'globe' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
         >
-          <Globe2 size={22} />
-          <span className="text-[10px] font-mono">Globe</span>
+          <Globe2 size={20} />
+          <span className="text-[9px] font-mono">Globe</span>
         </button>
         <button
           onClick={() => setMobileTab('live')}
-          className={`flex flex-col items-center gap-0.5 py-2 px-4 min-w-[72px] rounded-lg transition-colors ${mobileTab === 'live' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
+          className={`flex flex-col items-center gap-0 py-1.5 px-3 min-w-[64px] rounded-lg transition-colors touch-manipulation ${mobileTab === 'live' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
         >
-          <Video size={22} />
-          <span className="text-[10px] font-mono">Live</span>
+          <Video size={20} />
+          <span className="text-[9px] font-mono">Live</span>
         </button>
       </nav>
 

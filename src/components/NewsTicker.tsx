@@ -42,7 +42,7 @@ export default function NewsTicker({ headlines }: NewsTickerProps) {
   const doubled = [...headlines, ...headlines];
 
   return (
-    <div className="flex items-center bg-[#0a0e16] border-b border-cyan-500/10 overflow-hidden min-h-0 shrink-0">
+    <div className="hidden md:flex items-center bg-[#0a0e16] border-b border-cyan-500/10 overflow-hidden min-h-0 shrink-0">
       {/* Label */}
       <div className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 bg-red-500/10 border-r border-red-500/20 shrink-0">
         <AlertTriangle size={11} className="text-red-400 shrink-0 md:w-3 md:h-3" />
