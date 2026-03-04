@@ -19,6 +19,9 @@
 html, body {
   overflow-x: hidden;
   max-width: 100vw;
+  /* iOS viewport height fix */
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
 }
 
 body {
@@ -26,6 +29,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow: hidden;
+  /* iOS momentum scrolling */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* iOS tap highlight */

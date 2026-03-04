@@ -47,59 +47,59 @@ export default memo(function EventCard({ event, isSelected, onClick }: EventCard
     <div
       onClick={() => onClick(event)}
       className={`
-        relative p-3 rounded-lg border cursor-pointer transition-all duration-300 touch-manipulation
+        relative p-2 md:p-3 rounded-lg border cursor-pointer transition-all duration-300 touch-manipulation
         ${styles.border} ${styles.bg}
         ${isSelected ? 'ring-1 ring-cyan-400/50 bg-cyan-500/5' : 'hover:bg-white/[0.02]'}
       `}
     >
       {/* Header */}
-      <div className="flex items-start gap-2 mb-2">
-        <div className={`p-1.5 rounded ${styles.badge} border`}>
-          <Icon size={14} />
+      <div className="flex items-start gap-1.5 md:gap-2 mb-1 md:mb-2">
+        <div className={`p-1 md:p-1.5 rounded ${styles.badge} border shrink-0`}>
+          <Icon size={12} className="md:w-3.5 md:h-3.5" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
+          <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
             {event.ongoing && (
-              <span className="flex items-center gap-1 text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full border border-red-500/30 font-mono uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+              <span className="flex items-center gap-0.5 text-[9px] md:text-[10px] bg-red-500/20 text-red-400 px-1 md:px-1.5 py-0.5 rounded-full border border-red-500/30 font-mono uppercase tracking-wider">
+                <span className="w-1 h-1 md:w-1.5 md:h-1.5 bg-red-500 rounded-full animate-pulse" />
                 Live
               </span>
             )}
-            <span className={`text-[10px] font-mono uppercase tracking-wider ${styles.text}`}>
+            <span className={`text-[9px] md:text-[10px] font-mono uppercase tracking-wider ${styles.text}`}>
               {event.severity}
             </span>
           </div>
-          <h3 className="text-sm font-medium text-white/90 leading-tight truncate">{event.title}</h3>
+          <h3 className="text-xs md:text-sm font-medium text-white/90 leading-tight truncate">{event.title}</h3>
         </div>
       </div>
 
       {/* Description */}
-      <p className="text-xs text-gray-400 leading-relaxed mb-2 line-clamp-2">
+      <p className="text-[11px] md:text-xs text-gray-400 leading-snug mb-1 md:mb-2 line-clamp-2">
         {event.description}
       </p>
 
       {/* Damage estimate if available */}
       {event.estimatedDamage && (
-        <div className="text-[11px] text-amber-400/80 bg-amber-500/5 border border-amber-500/10 rounded px-2 py-1 mb-2">
+        <div className="text-[10px] md:text-[11px] text-amber-400/80 bg-amber-500/5 border border-amber-500/10 rounded px-1.5 md:px-2 py-0.5 md:py-1 mb-1 md:mb-2">
           Damage: {event.estimatedDamage}
         </div>
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-[10px]">
-        <div className="flex items-center gap-1.5">
-          <Crosshair size={10} className="text-gray-500" />
-          <span className="text-gray-500">{event.country}</span>
-          <span className="text-gray-600">|</span>
-          <span className="text-gray-500">{event.source}</span>
+      <div className="flex items-center justify-between text-[9px] md:text-[10px] gap-1">
+        <div className="flex items-center gap-1 min-w-0 truncate">
+          <Crosshair size={9} className="text-gray-500 shrink-0 md:w-2.5 md:h-2.5" />
+          <span className="text-gray-500 truncate">{event.country}</span>
+          <span className="text-gray-600 shrink-0">|</span>
+          <span className="text-gray-500 truncate">{event.source}</span>
         </div>
-        <span className="text-cyan-500/70 font-mono">{timeAgo}</span>
+        <span className="text-cyan-500/70 font-mono shrink-0">{timeAgo}</span>
       </div>
 
       {/* Parties involved */}
-      <div className="flex flex-wrap gap-1 mt-2">
+      <div className="flex flex-wrap gap-0.5 md:gap-1 mt-1 md:mt-2">
         {event.parties.map(p => (
-          <span key={p} className="text-[9px] px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-gray-400">
+          <span key={p} className="text-[8px] md:text-[9px] px-1 md:px-1.5 py-0.5 bg-white/5 border border-white/10 rounded text-gray-400">
             {p}
           </span>
         ))}
