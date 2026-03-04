@@ -27,10 +27,10 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
   }[event.severity];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))', paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
-      <div className="bg-[#0d1117] border border-cyan-500/20 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl shadow-cyan-500/5">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 md:p-8" style={{ paddingTop: 'max(0.5rem, env(safe-area-inset-top))', paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}>
+      <div className="bg-[#0d1117] border border-cyan-500/20 rounded-xl max-w-2xl w-full max-h-[90dvh] md:max-h-[80vh] overflow-y-auto shadow-2xl shadow-cyan-500/5">
         {/* Header */}
-        <div className="flex items-start justify-between p-5 border-b border-white/5">
+        <div className="flex items-start justify-between p-3 md:p-5 border-b border-white/5">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span className={`text-xs px-2 py-0.5 rounded-full border font-mono uppercase ${severityColor}`}>
@@ -46,7 +46,7 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
                 </span>
               )}
             </div>
-            <h2 className="text-xl font-semibold text-white">{event.title}</h2>
+            <h2 className="text-base md:text-xl font-semibold text-white leading-tight">{event.title}</h2>
           </div>
           <button
             onClick={onClose}
@@ -57,7 +57,7 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
         </div>
 
         {/* Body */}
-        <div className="p-5 space-y-4">
+        <div className="p-3 md:p-5 space-y-3 md:space-y-4">
           {/* Description */}
           <p className="text-sm text-gray-300 leading-relaxed">{event.description}</p>
 

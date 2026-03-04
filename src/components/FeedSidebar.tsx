@@ -63,22 +63,22 @@ export default function FeedSidebar({ events, marketImpacts = [], onEventClick, 
   const topMarket = marketImpacts[0];
 
   return (
-    <div className={`flex flex-col gap-3 w-[220px] md:w-[220px] shrink-0 border-l border-cyan-500/20 bg-[#0a0e16]/80 backdrop-blur-md p-2 ${className}`}>
+    <div className={`flex flex-col gap-2 md:gap-3 w-full md:w-[220px] shrink-0 border-l border-cyan-500/20 bg-[#0a0e16]/80 backdrop-blur-md p-1.5 md:p-2 ${className}`}>
       {/* Market indicators — always visible */}
       {topMarket && (
         <button
           onClick={onMarketClick}
-          className="w-full text-left rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 hover:bg-emerald-500/15 transition-colors"
+          className="w-full text-left rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2 md:p-2.5 hover:bg-emerald-500/15 transition-colors"
         >
-          <div className="flex items-center gap-1.5 mb-1">
-            <BarChart3 size={12} className="text-emerald-400" />
-            <span className="text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Market Impact</span>
+          <div className="flex items-center gap-1 md:gap-1.5 mb-0.5 md:mb-1">
+            <BarChart3 size={11} className="text-emerald-400 md:w-3 md:h-3" />
+            <span className="text-[8px] md:text-[9px] font-mono text-emerald-400 uppercase tracking-wider">Market Impact</span>
           </div>
-          <div className="text-[11px] font-mono text-emerald-300 mb-0.5">{topMarket.impact}</div>
+          <div className="text-[10px] md:text-[11px] font-mono text-emerald-300 mb-0.5">{topMarket.impact}</div>
           {topMarket.indices && (
-            <div className="text-[10px] text-cyan-400/80 font-mono">{topMarket.indices}</div>
+            <div className="text-[9px] md:text-[10px] text-cyan-400/80 font-mono">{topMarket.indices}</div>
           )}
-          <div className="text-[9px] text-gray-500 mt-1 line-clamp-1">{topMarket.headline}</div>
+          <div className="text-[8px] md:text-[9px] text-gray-500 mt-0.5 md:mt-1 line-clamp-1">{topMarket.headline}</div>
         </button>
       )}
 
@@ -98,13 +98,13 @@ export default function FeedSidebar({ events, marketImpacts = [], onEventClick, 
       )}
 
       {/* Critical alerts */}
-      <div className="flex-1 min-h-0 flex flex-col gap-2">
-        <div className="flex items-center gap-1">
-          <AlertTriangle size={11} className="text-red-400" />
-          <span className="text-[9px] font-mono text-red-400 uppercase tracking-wider">Critical</span>
+      <div className="flex-1 min-h-0 flex flex-col gap-1.5 md:gap-2">
+        <div className="flex items-center gap-0.5 md:gap-1">
+          <AlertTriangle size={10} className="text-red-400 md:w-[11px] md:h-[11px]" />
+          <span className="text-[8px] md:text-[9px] font-mono text-red-400 uppercase tracking-wider">Critical</span>
         </div>
         {toasts.length === 0 ? (
-          <div className="text-[10px] text-gray-600 font-mono py-2">No active critical alerts</div>
+          <div className="text-[9px] md:text-[10px] text-gray-600 font-mono py-1 md:py-2">No active critical alerts</div>
         ) : (
           toasts.map(toast => {
             const elapsed = Date.now() - toast.shownAt;
@@ -117,11 +117,11 @@ export default function FeedSidebar({ events, marketImpacts = [], onEventClick, 
               >
                 <button
                   onClick={() => onEventClick(toast.event)}
-                  className="w-full text-left p-2.5 pr-7 hover:bg-red-500/15 transition-colors"
+                  className="w-full text-left p-2 md:p-2.5 pr-6 md:pr-7 hover:bg-red-500/15 transition-colors"
                 >
-                  <div className="text-[9px] font-mono text-red-400 uppercase mb-0.5">CRITICAL</div>
-                  <h4 className="text-xs font-medium text-white leading-tight line-clamp-2">{toast.event.title}</h4>
-                  <div className="text-[10px] text-gray-400 mt-0.5">{toast.event.country} · {toast.event.region}</div>
+                  <div className="text-[8px] md:text-[9px] font-mono text-red-400 uppercase mb-0.5">CRITICAL</div>
+                  <h4 className="text-[11px] md:text-xs font-medium text-white leading-tight line-clamp-2">{toast.event.title}</h4>
+                  <div className="text-[9px] md:text-[10px] text-gray-400 mt-0.5">{toast.event.country} · {toast.event.region}</div>
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); handleDismiss(toast.id); }}
