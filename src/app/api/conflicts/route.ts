@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getConflictEvents, getVideoFeeds, getGlobalStats, getIntelLinks } from '@/lib/conflict-data';
+import { getConflictEvents, getVideoFeeds, getGlobalStats, getIntelLinks, getIncrementalEvents } from '@/lib/conflict-data';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -105,7 +105,11 @@ export async function GET() {
       .filter(item => !isPropaganda(item))
       .slice(0, 20);
 
-    const events = getConflictEvents();
+    const baseEvents = getConflictEvents();
+    const incremental = getIncrementalEvents();
+    const events = [...baseEvents, ...incremental].sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
     const videos = getVideoFeeds();
     const stats = getGlobalStats(events);
     const intelLinks = getIntelLinks();
@@ -124,7 +128,11 @@ export async function GET() {
       timestamp: new Date().toISOString(),
     });
   } catch {
-    const events = getConflictEvents();
+    const baseEvents = getConflictEvents();
+    const incremental = getIncrementalEvents();
+    const events = [...baseEvents, ...incremental].sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
     return NextResponse.json({
       events,
       videos: getVideoFeeds(),

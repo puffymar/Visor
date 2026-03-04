@@ -9,6 +9,7 @@ import EventCard from './EventCard';
 import EventDetail from './EventDetail';
 import VideoPanel from './VideoPanel';
 import IntelPanel from './IntelPanel';
+import FocusPanel from './FocusPanel';
 import RegionFilter from './RegionFilter';
 import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning } from 'lucide-react';
 
@@ -30,7 +31,7 @@ interface DashboardData {
   timestamp: string;
 }
 
-const REFRESH_INTERVAL = 60000;
+const REFRESH_INTERVAL = 60000; // 60s refresh; API adds 5 new events every 4 min
 
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -43,6 +44,7 @@ export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortOrder, setSortOrder] = useState<'newest' | 'severity'>('newest');
   const [intelOpen, setIntelOpen] = useState(false);
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastFetchRef = useRef<number>(0);
   const selectedEventRef = useRef<ConflictEvent | null>(null);
@@ -80,6 +82,17 @@ export default function Dashboard() {
     return () => { if (refreshTimerRef.current) clearInterval(refreshTimerRef.current); };
   }, [fetchData]);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setDetailEvent(null);
+        setSelectedEvent(null);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   const handleSelectEvent = useCallback((event: ConflictEvent) => {
     setSelectedEvent(event);
   }, []);
@@ -105,6 +118,15 @@ export default function Dashboard() {
 
   const handleToggleIntel = useCallback(() => {
     setIntelOpen(v => !v);
+  }, []);
+
+  const handleCheckEvent = useCallback((event: ConflictEvent) => {
+    setCheckedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(event.id)) next.delete(event.id);
+      else next.add(event.id);
+      return next;
+    });
   }, []);
 
   const filteredEvents = useMemo(() => {
@@ -188,7 +210,7 @@ export default function Dashboard() {
               </span>
             )}
           </button>
-          <span className="text-[10px] text-gray-500 font-mono">60s</span>
+          <span className="text-[10px] text-gray-500 font-mono" title="Refresh every 60s; +5 events every 4 min">60s · +5/4m</span>
           <button
             onClick={() => fetchData(true)}
             className={`p-1.5 rounded-md border border-cyan-500/20 hover:bg-cyan-500/10 transition-all ${isRefreshing ? 'animate-spin' : ''}`}
@@ -273,6 +295,16 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Dedicated Focus / Check panel */}
+        {selectedEvent && (
+          <FocusPanel
+            event={selectedEvent}
+            onClose={() => setSelectedEvent(null)}
+            checked={checkedIds.has(selectedEvent.id)}
+            onCheck={() => handleCheckEvent(selectedEvent)}
+          />
+        )}
 
         <VideoPanel videos={data.videos} isExpanded={videoPanelOpen} onToggle={handleToggleVideoPanel} />
       </div>
