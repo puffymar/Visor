@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { ConflictEvent } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -34,17 +35,17 @@ const SEVERITY_STYLES: Record<ConflictEvent['severity'], { border: string; bg: s
 interface EventCardProps {
   event: ConflictEvent;
   isSelected: boolean;
-  onClick: () => void;
+  onClick: (event: ConflictEvent) => void;
 }
 
-export default function EventCard({ event, isSelected, onClick }: EventCardProps) {
+export default memo(function EventCard({ event, isSelected, onClick }: EventCardProps) {
   const Icon = TYPE_ICONS[event.type];
   const styles = SEVERITY_STYLES[event.severity];
   const timeAgo = formatDistanceToNow(new Date(event.timestamp), { addSuffix: true });
 
   return (
     <div
-      onClick={onClick}
+      onClick={() => onClick(event)}
       className={`
         relative p-3 rounded-lg border cursor-pointer transition-all duration-300
         ${styles.border} ${styles.bg}
@@ -105,4 +106,4 @@ export default function EventCard({ event, isSelected, onClick }: EventCardProps
       </div>
     </div>
   );
-}
+})

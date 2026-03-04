@@ -36,6 +36,17 @@ export interface GlobalStats {
   lastUpdated: string;
 }
 
+export interface IntelLink {
+  id: string;
+  title: string;
+  url: string;
+  description: string;
+  region: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  timestamp: string;
+  source: string;
+}
+
 export interface NewsSource {
   name: string;
   reliability: 'high' | 'medium';

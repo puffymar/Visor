@@ -16,6 +16,7 @@ interface NewsTickerProps {
 
 export default function NewsTicker({ headlines }: NewsTickerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollPosRef = useRef(0);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
@@ -23,18 +24,17 @@ export default function NewsTicker({ headlines }: NewsTickerProps) {
     if (!el || isPaused) return;
 
     let animFrame: number;
-    let scrollPos = 0;
 
     const scroll = () => {
-      scrollPos += 0.5;
-      if (scrollPos >= el.scrollWidth / 2) scrollPos = 0;
-      el.scrollLeft = scrollPos;
+      scrollPosRef.current += 0.5;
+      if (scrollPosRef.current >= el.scrollWidth / 2) scrollPosRef.current = 0;
+      el.scrollLeft = scrollPosRef.current;
       animFrame = requestAnimationFrame(scroll);
     };
 
     animFrame = requestAnimationFrame(scroll);
     return () => cancelAnimationFrame(animFrame);
-  }, [isPaused, headlines]);
+  }, [isPaused]);
 
   if (headlines.length === 0) return null;
 

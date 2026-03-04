@@ -1,4 +1,4 @@
-import { ConflictEvent, VideoFeed, GlobalStats } from './types';
+import { ConflictEvent, VideoFeed, GlobalStats, IntelLink } from './types';
 
 // Seed conflicts based on real-world conflict zones with realistic data
 // This provides the baseline; the API route enriches with live RSS/news data
@@ -337,6 +337,73 @@ const SEED_VIDEOS: VideoFeed[] = [
     region: 'Middle East',
   },
 ];
+
+const SEED_INTEL_LINKS: IntelLink[] = [
+  {
+    id: 'intel-001',
+    title: 'Assessment: Russian Winter Offensive Planning — Zaporizhzhia Axis',
+    url: 'https://www.understandingwar.org',
+    description: 'ISW analysis indicates preparation for renewed offensive operations in Zaporizhzhia Oblast. Satellite imagery shows force buildup near Tokmak. 3 BTGs redeployed from Luhansk.',
+    region: 'Eastern Europe',
+    severity: 'critical',
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    source: 'ISW',
+  },
+  {
+    id: 'intel-002',
+    title: 'Iran IRGC Quds Force: Proxy Coordination Increase Detected',
+    url: 'https://www.reuters.com/world/middle-east/',
+    description: 'Multi-source intelligence suggests increased coordination between IRGC Quds Force and regional proxies (Hezbollah, Houthi, PMF). Communications intercepts indicate potential synchronized escalation.',
+    region: 'Middle East',
+    severity: 'critical',
+    timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    source: 'Multi-Source / OSINT',
+  },
+  {
+    id: 'intel-003',
+    title: 'Red Sea Shipping: New Houthi Anti-Ship Ballistic Missile Variant',
+    url: 'https://www.centcom.mil',
+    description: 'CENTCOM reports recovery of fragments indicating a new ASBM variant with terminal guidance. Threat to commercial shipping in Bab el-Mandeb elevated. Insurance premiums surging 300%.',
+    region: 'Middle East',
+    severity: 'high',
+    timestamp: new Date(Date.now() - 1000 * 60 * 200).toISOString(),
+    source: 'CENTCOM',
+  },
+  {
+    id: 'intel-004',
+    title: 'Sudan: RSF Planning Mass Civilian Displacement in Darfur',
+    url: 'https://www.unocha.org',
+    description: 'UN OCHA early warning: RSF forces systematically destroying water infrastructure around El-Fasher. Pattern consistent with deliberate civilian displacement strategy. 1.2M at risk.',
+    region: 'Africa',
+    severity: 'critical',
+    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    source: 'UN OCHA',
+  },
+  {
+    id: 'intel-005',
+    title: 'DRC: M23 Receiving Advanced Air Defense Systems',
+    url: 'https://www.bbc.com/news/world/africa',
+    description: 'MONUSCO reports M23 forces have deployed MANPADS near Goma airfield, likely supplied via Rwanda. Restricts UN humanitarian air operations and government aerial capability.',
+    region: 'Africa',
+    severity: 'high',
+    timestamp: new Date(Date.now() - 1000 * 60 * 300).toISOString(),
+    source: 'MONUSCO / BBC',
+  },
+  {
+    id: 'intel-006',
+    title: 'Cyber: APT Groups Targeting NATO C2 Infrastructure',
+    url: 'https://www.cisa.gov',
+    description: 'CISA advisory: Sandworm (GRU Unit 74455) conducting active campaign against NATO command-and-control networks. Zero-day exploit in satellite communication systems confirmed.',
+    region: 'Global',
+    severity: 'high',
+    timestamp: new Date(Date.now() - 1000 * 60 * 400).toISOString(),
+    source: 'CISA / NSA',
+  },
+];
+
+export function getIntelLinks(): IntelLink[] {
+  return SEED_INTEL_LINKS;
+}
 
 // Simulate real-time jitter on timestamps and add new micro-events
 function applyRealtimeJitter(events: ConflictEvent[]): ConflictEvent[] {

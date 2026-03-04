@@ -1,27 +1,36 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { ConflictEvent, VideoFeed, GlobalStats } from '@/lib/types';
+import { ConflictEvent, VideoFeed, GlobalStats, IntelLink } from '@/lib/types';
 import StatsBar from './StatsBar';
 import NewsTicker from './NewsTicker';
 import EventCard from './EventCard';
 import EventDetail from './EventDetail';
 import VideoPanel from './VideoPanel';
+import IntelPanel from './IntelPanel';
 import RegionFilter from './RegionFilter';
-import { Shield, RefreshCw, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning } from 'lucide-react';
 
-const Globe = dynamic(() => import('./Globe'), { ssr: false });
+const Globe = dynamic(() => import('./Globe'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="text-cyan-500 font-mono text-xs animate-pulse">INITIALIZING 3D ENGINE...</div>
+    </div>
+  ),
+});
 
 interface DashboardData {
   events: ConflictEvent[];
   videos: VideoFeed[];
   stats: GlobalStats;
+  intelLinks: IntelLink[];
   liveHeadlines: { title: string; link: string; source: string; timestamp: string }[];
   timestamp: string;
 }
 
-const REFRESH_INTERVAL = 60000; // 60 seconds
+const REFRESH_INTERVAL = 60000;
 
 export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -33,8 +42,11 @@ export default function Dashboard() {
   const [isConnected, setIsConnected] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortOrder, setSortOrder] = useState<'newest' | 'severity'>('newest');
+  const [intelOpen, setIntelOpen] = useState(false);
   const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastFetchRef = useRef<number>(0);
+  const selectedEventRef = useRef<ConflictEvent | null>(null);
+  selectedEventRef.current = selectedEvent;
 
   const fetchData = useCallback(async (showSpinner = false) => {
     if (showSpinner) setIsRefreshing(true);
@@ -43,14 +55,13 @@ export default function Dashboard() {
       if (!res.ok) throw new Error('Failed to fetch');
       const json: DashboardData = await res.json();
 
-      setData(prev => {
-        // Seamless merge: preserve selection state
-        if (prev && selectedEvent) {
-          const updated = json.events.find(e => e.id === selectedEvent.id);
-          if (updated) setSelectedEvent(updated);
-        }
-        return json;
-      });
+      setData(json);
+
+      const sel = selectedEventRef.current;
+      if (sel) {
+        const updated = json.events.find(e => e.id === sel.id);
+        if (updated) setSelectedEvent(updated);
+      }
 
       setIsConnected(true);
       lastFetchRef.current = Date.now();
@@ -61,42 +72,66 @@ export default function Dashboard() {
         setTimeout(() => setIsRefreshing(false), 500);
       }
     }
-  }, [selectedEvent]);
+  }, []);
 
-  // Initial fetch + polling
   useEffect(() => {
     fetchData(true);
-
-    refreshTimerRef.current = setInterval(() => {
-      fetchData(false);
-    }, REFRESH_INTERVAL);
-
-    return () => {
-      if (refreshTimerRef.current) clearInterval(refreshTimerRef.current);
-    };
+    refreshTimerRef.current = setInterval(() => fetchData(false), REFRESH_INTERVAL);
+    return () => { if (refreshTimerRef.current) clearInterval(refreshTimerRef.current); };
   }, [fetchData]);
 
-  // Filter & sort events
-  const filteredEvents = data?.events.filter(e => {
-    const matchRegion = regionFilter === 'All' || e.region === regionFilter;
-    const matchSearch = searchQuery === '' ||
-      e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      e.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchRegion && matchSearch;
-  }).sort((a, b) => {
-    if (sortOrder === 'severity') {
-      const order = { critical: 0, high: 1, medium: 2, low: 3 };
-      return order[a.severity] - order[b.severity];
-    }
-    return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-  }) ?? [];
+  const handleSelectEvent = useCallback((event: ConflictEvent) => {
+    setSelectedEvent(event);
+  }, []);
 
-  // Event counts by region
-  const eventCounts = data?.events.reduce((acc, e) => {
-    acc[e.region] = (acc[e.region] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>) ?? {};
+  const handleEventClick = useCallback((event: ConflictEvent) => {
+    setSelectedEvent(event);
+    setDetailEvent(event);
+  }, []);
+
+  const handleToggleVideoPanel = useCallback(() => {
+    setVideoPanelOpen(v => !v);
+  }, []);
+
+  const handleCriticalClick = useCallback(() => {
+    if (!data) return;
+    const criticals = data.events.filter(e => e.severity === 'critical');
+    if (criticals.length > 0) {
+      setDetailEvent(criticals[0]);
+      setSelectedEvent(criticals[0]);
+      setSortOrder('severity');
+    }
+  }, [data]);
+
+  const handleToggleIntel = useCallback(() => {
+    setIntelOpen(v => !v);
+  }, []);
+
+  const filteredEvents = useMemo(() => {
+    if (!data) return [];
+    return data.events.filter(e => {
+      const matchRegion = regionFilter === 'All' || e.region === regionFilter;
+      const matchSearch = searchQuery === '' ||
+        e.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        e.description.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchRegion && matchSearch;
+    }).sort((a, b) => {
+      if (sortOrder === 'severity') {
+        const order = { critical: 0, high: 1, medium: 2, low: 3 };
+        return order[a.severity] - order[b.severity];
+      }
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
+  }, [data, regionFilter, searchQuery, sortOrder]);
+
+  const eventCounts = useMemo(() => {
+    if (!data) return {};
+    return data.events.reduce((acc, e) => {
+      acc[e.region] = (acc[e.region] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [data]);
 
   if (!data) {
     return (
@@ -117,6 +152,8 @@ export default function Dashboard() {
     );
   }
 
+  const criticalCount = data.intelLinks?.filter(l => l.severity === 'critical').length ?? 0;
+
   return (
     <div className="h-screen flex flex-col bg-[#080b12] text-white overflow-hidden">
       {/* Top Bar */}
@@ -135,9 +172,23 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-gray-500 font-mono">
-            Auto-refresh: 60s
-          </span>
+          <button
+            onClick={handleToggleIntel}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all text-xs font-mono ${
+              intelOpen
+                ? 'border-amber-400/40 bg-amber-500/10 text-amber-400'
+                : 'border-cyan-500/20 hover:bg-cyan-500/10 text-cyan-400'
+            }`}
+          >
+            <FileWarning size={13} />
+            INTEL
+            {criticalCount > 0 && (
+              <span className="w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center font-bold">
+                {criticalCount}
+              </span>
+            )}
+          </button>
+          <span className="text-[10px] text-gray-500 font-mono">60s</span>
           <button
             onClick={() => fetchData(true)}
             className={`p-1.5 rounded-md border border-cyan-500/20 hover:bg-cyan-500/10 transition-all ${isRefreshing ? 'animate-spin' : ''}`}
@@ -147,19 +198,13 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Stats Bar */}
-      <StatsBar stats={data.stats} isConnected={isConnected} />
-
-      {/* News Ticker */}
+      <StatsBar stats={data.stats} isConnected={isConnected} onCriticalClick={handleCriticalClick} />
       <NewsTicker headlines={data.liveHeadlines} />
 
-      {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Panel - Event List */}
+        {/* Left Panel */}
         <div className="w-96 flex flex-col border-r border-cyan-500/10 bg-[#0a0e16]/50">
-          {/* Search & Filter */}
           <div className="p-3 space-y-2 border-b border-white/5">
-            {/* Search */}
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
@@ -170,19 +215,9 @@ export default function Dashboard() {
                 className="w-full pl-9 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 focus:ring-1 focus:ring-cyan-500/20 transition-all"
               />
             </div>
-
-            {/* Region filter */}
-            <RegionFilter
-              selected={regionFilter}
-              onChange={setRegionFilter}
-              eventCounts={eventCounts}
-            />
-
-            {/* Sort */}
+            <RegionFilter selected={regionFilter} onChange={setRegionFilter} eventCounts={eventCounts} />
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gray-500 font-mono">
-                {filteredEvents.length} events
-              </span>
+              <span className="text-[10px] text-gray-500 font-mono">{filteredEvents.length} events</span>
               <button
                 onClick={() => setSortOrder(s => s === 'newest' ? 'severity' : 'newest')}
                 className="flex items-center gap-1 text-[10px] text-gray-500 hover:text-cyan-400 transition-colors font-mono"
@@ -192,34 +227,22 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-
-          {/* Event List */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
             {filteredEvents.map(event => (
               <EventCard
                 key={event.id}
                 event={event}
                 isSelected={selectedEvent?.id === event.id}
-                onClick={() => {
-                  setSelectedEvent(event);
-                  setDetailEvent(event);
-                }}
+                onClick={handleEventClick}
               />
             ))}
           </div>
         </div>
 
-        {/* Center - Globe */}
+        {/* Globe */}
         <div className="flex-1 relative">
-          <Globe
-            events={data.events}
-            onSelectEvent={(event) => {
-              setSelectedEvent(event);
-            }}
-            selectedEvent={selectedEvent}
-          />
+          <Globe events={data.events} onSelectEvent={handleSelectEvent} selectedEvent={selectedEvent} />
 
-          {/* Globe overlay: threat level */}
           <div className="absolute top-4 right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-3 backdrop-blur-md">
             <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Global Threat Level</div>
             <div className="flex items-center gap-2">
@@ -239,11 +262,10 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Globe overlay: sources */}
           <div className="absolute bottom-4 right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-3 backdrop-blur-md">
             <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1.5">Active Sources</div>
             <div className="flex flex-wrap gap-1">
-              {['Reuters', 'AP', 'BBC', 'ACLED', 'UN OCHA', 'ISW', 'CENTCOM'].map(s => (
+              {['Reuters', 'AP', 'BBC', 'Al Jazeera', 'Al Arabiya', 'ACLED', 'UN OCHA', 'ISW', 'CENTCOM'].map(s => (
                 <span key={s} className="text-[9px] px-1.5 py-0.5 bg-green-500/10 border border-green-500/20 rounded text-green-400 font-mono">
                   {s}
                 </span>
@@ -252,21 +274,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Right Panel - Videos */}
-        <VideoPanel
-          videos={data.videos}
-          isExpanded={videoPanelOpen}
-          onToggle={() => setVideoPanelOpen(v => !v)}
-        />
+        <VideoPanel videos={data.videos} isExpanded={videoPanelOpen} onToggle={handleToggleVideoPanel} />
       </div>
 
-      {/* Detail Modal */}
-      {detailEvent && (
-        <EventDetail
-          event={detailEvent}
-          onClose={() => setDetailEvent(null)}
-        />
-      )}
+      {detailEvent && <EventDetail event={detailEvent} onClose={() => setDetailEvent(null)} />}
+      {intelOpen && data.intelLinks && <IntelPanel links={data.intelLinks} onClose={() => setIntelOpen(false)} />}
     </div>
   );
 }

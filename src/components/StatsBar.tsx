@@ -7,9 +7,10 @@ import { formatDistanceToNow } from 'date-fns';
 interface StatsBarProps {
   stats: GlobalStats;
   isConnected: boolean;
+  onCriticalClick?: () => void;
 }
 
-export default function StatsBar({ stats, isConnected }: StatsBarProps) {
+export default function StatsBar({ stats, isConnected, onCriticalClick }: StatsBarProps) {
   const statItems = [
     {
       icon: Flame,
@@ -49,17 +50,20 @@ export default function StatsBar({ stats, isConnected }: StatsBarProps) {
     <div className="flex items-center gap-4 px-4 py-2 bg-[#0d1117]/80 border-b border-cyan-500/10">
       {statItems.map((item) => {
         const Icon = item.icon;
+        const isCritical = item.label === 'Critical Alerts';
+        const El = isCritical && onCriticalClick ? 'button' : 'div';
         return (
-          <div
+          <El
             key={item.label}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md border ${item.borderColor} ${item.bgColor}`}
+            onClick={isCritical && onCriticalClick ? onCriticalClick : undefined}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md border ${item.borderColor} ${item.bgColor} ${isCritical && onCriticalClick ? 'cursor-pointer hover:ring-1 hover:ring-amber-400/40 transition-all' : ''}`}
           >
             <Icon size={14} className={item.color} />
             <div className="flex items-baseline gap-1.5">
               <span className={`text-lg font-bold font-mono ${item.color}`}>{item.value}</span>
               <span className="text-[10px] text-gray-500 uppercase tracking-wider">{item.label}</span>
             </div>
-          </div>
+          </El>
         );
       })}
 
