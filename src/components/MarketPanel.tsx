@@ -18,14 +18,14 @@ const TRADING_LINKS = [
 
 export default function MarketPanel({ marketImpacts, onClose }: MarketPanelProps) {
   return (
-    <>
+    <div className="fixed inset-0 z-40">
       {/* Backdrop — click to minimize */}
       <button
         onClick={onClose}
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         aria-label="Close market panel"
       />
-      <div className="fixed inset-y-0 right-0 w-[420px] bg-[#0a0e16]/98 border-l border-emerald-500/20 backdrop-blur-xl z-50 flex flex-col shadow-2xl shadow-black/50">
+      <div className="absolute inset-y-0 right-0 w-[420px] bg-[#0a0e16]/98 border-l border-emerald-500/20 backdrop-blur-xl flex flex-col shadow-2xl shadow-black/50">
         <div className="flex items-center justify-between px-4 py-3 border-b border-emerald-500/20 bg-[#0d1117]">
           <div className="flex items-center gap-2">
             <BarChart3 size={16} className="text-emerald-400" />
@@ -95,6 +95,7 @@ export default function MarketPanel({ marketImpacts, onClose }: MarketPanelProps
           </div>
         </div>
       </div>
-    </>
+      </div>
+    </div>
   );
 }
