@@ -1,4 +1,4 @@
-import { ConflictEvent, VideoFeed, GlobalStats, IntelLink } from './types';
+import { ConflictEvent, VideoFeed, GlobalStats, IntelLink, MarketImpactAssessment } from './types';
 
 // Seed conflicts based on real-world conflict zones with realistic data
 // This provides the baseline; the API route enriches with live RSS/news data
@@ -438,6 +438,58 @@ const SEED_INTEL_LINKS: IntelLink[] = [
 
 export function getIntelLinks(): IntelLink[] {
   return SEED_INTEL_LINKS;
+}
+
+const SEED_MARKET_IMPACTS: MarketImpactAssessment[] = [
+  {
+    id: 'mkt-001',
+    headline: 'Iran-Israel escalation: Oil & defense sector volatility',
+    impact: 'WTI crude +8–12% | XLE +3–5% | LMT/NOC +4–6%',
+    confidence: 'high',
+    reasoning: 'Direct Iran-Israel conflict would spike oil on supply fears. Defense contractors benefit from elevated tensions. Historical correlation: 2019 Abqaiq attack sent oil +15%.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    indices: 'S&P 500 -1.5% to -3%',
+  },
+  {
+    id: 'mkt-002',
+    headline: 'Red Sea shipping disruption: Logistics & retail',
+    impact: 'UPS/FDX -2% | Retail margins -0.5–1%',
+    confidence: 'high',
+    reasoning: 'Houthi attacks extend Suez detours. Container rates up 150% YTD. 2–4 week delivery delays compress Q1 margins for big-box retail.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 90).toISOString(),
+    indices: 'Russell 2000 -0.8%',
+  },
+  {
+    id: 'mkt-003',
+    headline: 'Ukraine energy strikes: European gas & utilities',
+    impact: 'TTF gas +15–25% | European utilities -2–4%',
+    confidence: 'medium',
+    reasoning: 'Russian strikes on Ukrainian grid reduce exports to EU. TTF already elevated; further cuts would spike winter pricing. German industrials most exposed.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    indices: 'Euro Stoxx 50 -1% to -2%',
+  },
+  {
+    id: 'mkt-004',
+    headline: 'Sudan/Darfur: Minimal direct market impact',
+    impact: 'Negligible on major indices',
+    confidence: 'high',
+    reasoning: 'Humanitarian crisis with limited commodity exposure. Gold may see marginal safe-haven bid (+0.3–0.5%). No significant supply chain links.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
+    indices: 'S&P 500 flat',
+  },
+  {
+    id: 'mkt-005',
+    headline: 'Cyber/NATO C2: Cybersecurity sector tailwind',
+    impact: 'CRWD/PANW/ZS +2–5%',
+    confidence: 'medium',
+    reasoning: 'CISA advisory on NATO infrastructure drives gov/defense cybersecurity spend. Similar pattern post-SolarWinds: sector outperformed by 8% over 90 days.',
+    timestamp: new Date(Date.now() - 1000 * 60 * 240).toISOString(),
+    indices: 'NASDAQ +0.5% (sector rotation)',
+  },
+];
+
+export function getMarketImpacts(): MarketImpactAssessment[] {
+  return SEED_MARKET_IMPACTS;
 }
 
 // Simulate real-time jitter on timestamps and add new micro-events

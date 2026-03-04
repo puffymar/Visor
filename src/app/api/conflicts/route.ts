@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getConflictEvents, getVideoFeeds, getGlobalStats, getIntelLinks, getIncrementalEvents } from '@/lib/conflict-data';
+import { getConflictEvents, getVideoFeeds, getGlobalStats, getIntelLinks, getIncrementalEvents, getMarketImpacts } from '@/lib/conflict-data';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -113,12 +113,14 @@ export async function GET() {
     const videos = getVideoFeeds();
     const stats = getGlobalStats(events);
     const intelLinks = getIntelLinks();
+    const marketImpacts = getMarketImpacts();
 
     return NextResponse.json({
       events,
       videos,
       stats,
       intelLinks,
+      marketImpacts,
       liveHeadlines: liveHeadlines.map(h => ({
         title: h.title,
         link: h.link,
@@ -138,6 +140,7 @@ export async function GET() {
       videos: getVideoFeeds(),
       stats: getGlobalStats(events),
       intelLinks: getIntelLinks(),
+      marketImpacts: getMarketImpacts(),
       liveHeadlines: [],
       timestamp: new Date().toISOString(),
     });

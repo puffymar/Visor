@@ -1,8 +1,8 @@
 'use client';
 
-import { IntelLink } from '@/lib/types';
+import { IntelLink, MarketImpactAssessment } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
-import { ExternalLink, FileWarning, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { ExternalLink, FileWarning, X, ChevronDown, ChevronUp, TrendingUp, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 
 const SEV_STYLE: Record<string, { border: string; badge: string; text: string }> = {
@@ -14,18 +14,21 @@ const SEV_STYLE: Record<string, { border: string; badge: string; text: string }>
 
 interface IntelPanelProps {
   links: IntelLink[];
+  marketImpacts?: MarketImpactAssessment[];
   onClose: () => void;
 }
 
-export default function IntelPanel({ links, onClose }: IntelPanelProps) {
+export default function IntelPanel({ links, marketImpacts = [], onClose }: IntelPanelProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  const [activeTab, setActiveTab] = useState<'intel' | 'market'>('intel');
 
   return (
     <div className="fixed inset-y-0 right-0 w-[420px] bg-[#0a0e16]/98 border-l border-cyan-500/20 backdrop-blur-xl z-50 flex flex-col shadow-2xl shadow-black/50">
       <div className="flex items-center justify-between px-4 py-3 border-b border-cyan-500/15 bg-[#0d1117]">
         <div className="flex items-center gap-2">
           <FileWarning size={16} className="text-amber-400" />
-          <h2 className="text-sm font-bold font-mono text-cyan-400 uppercase tracking-wider">Intel Links</h2>
+          <h2 className="text-sm font-bold font-mono text-cyan-400 uppercase tracking-wider">Intel</h2>
           <span className="text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-1.5 py-0.5 rounded font-mono">
             {links.length}
           </span>
@@ -35,11 +38,62 @@ export default function IntelPanel({ links, onClose }: IntelPanelProps) {
         </button>
       </div>
 
+      {/* Tabs */}
+      <div className="flex border-b border-white/5">
+        <button
+          onClick={() => setActiveTab('intel')}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-mono transition-colors ${
+            activeTab === 'intel' ? 'text-cyan-400 border-b-2 border-cyan-500 bg-cyan-500/5' : 'text-gray-500 hover:text-gray-400'
+          }`}
+        >
+          <FileWarning size={12} />
+          Links
+        </button>
+        <button
+          onClick={() => setActiveTab('market')}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-mono transition-colors ${
+            activeTab === 'market' ? 'text-cyan-400 border-b-2 border-cyan-500 bg-cyan-500/5' : 'text-gray-500 hover:text-gray-400'
+          }`}
+        >
+          <BarChart3 size={12} />
+          Market Impact
+        </button>
+      </div>
+
       <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
-        {links.sort((a, b) => {
+        {activeTab === 'market' && marketImpacts.length > 0 && (
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp size={14} className="text-emerald-400" />
+              <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider">Stock Market Impact Assessment</span>
+            </div>
+            {marketImpacts.map(m => (
+              <div key={m.id} className="border border-emerald-500/20 rounded-lg bg-emerald-500/5 p-3">
+                <h4 className="text-xs font-medium text-white leading-tight mb-2">{m.headline}</h4>
+                <div className="text-[11px] font-mono text-emerald-400 mb-1.5">{m.impact}</div>
+                {m.indices && (
+                  <div className="text-[10px] text-cyan-400/80 font-mono mb-1.5">{m.indices}</div>
+                )}
+                <p className="text-[11px] text-gray-400 leading-relaxed mb-2">{m.reasoning}</p>
+                <div className="flex items-center justify-between">
+                  <span className={`text-[9px] font-mono uppercase ${
+                    m.confidence === 'high' ? 'text-green-400' : m.confidence === 'medium' ? 'text-yellow-400' : 'text-gray-500'
+                  }`}>
+                    {m.confidence} confidence
+                  </span>
+                  <span className="text-[10px] text-gray-600 font-mono">
+                    {formatDistanceToNow(new Date(m.timestamp), { addSuffix: true })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'intel' && [...links].sort((a, b) => {
           const ord = { critical: 0, high: 1, medium: 2, low: 3 };
           return ord[a.severity] - ord[b.severity];
-        }).map(link => {
+        }).map((link: IntelLink) => {
           const s = SEV_STYLE[link.severity];
           const isOpen = expanded === link.id;
           return (

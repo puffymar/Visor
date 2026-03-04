@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { ConflictEvent, VideoFeed, GlobalStats, IntelLink } from '@/lib/types';
+import { ConflictEvent, VideoFeed, GlobalStats, IntelLink, MarketImpactAssessment } from '@/lib/types';
 import StatsBar from './StatsBar';
 import NewsTicker from './NewsTicker';
 import EventCard from './EventCard';
@@ -10,6 +10,7 @@ import EventDetail from './EventDetail';
 import VideoPanel from './VideoPanel';
 import IntelPanel from './IntelPanel';
 import FocusPanel from './FocusPanel';
+import CriticalAlertToasts from './CriticalAlertToasts';
 import RegionFilter from './RegionFilter';
 import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning } from 'lucide-react';
 
@@ -27,6 +28,7 @@ interface DashboardData {
   videos: VideoFeed[];
   stats: GlobalStats;
   intelLinks: IntelLink[];
+  marketImpacts?: MarketImpactAssessment[];
   liveHeadlines: { title: string; link: string; source: string; timestamp: string }[];
   timestamp: string;
 }
@@ -306,11 +308,23 @@ export default function Dashboard() {
           />
         )}
 
+        {/* Critical alerts (Iran war etc) — left of live feed, auto-dismiss 10s */}
+        <CriticalAlertToasts
+          events={data.events}
+          onClick={(e) => { setSelectedEvent(e); setDetailEvent(e); }}
+        />
+
         <VideoPanel videos={data.videos} isExpanded={videoPanelOpen} onToggle={handleToggleVideoPanel} />
       </div>
 
       {detailEvent && <EventDetail event={detailEvent} onClose={() => setDetailEvent(null)} />}
-      {intelOpen && data.intelLinks && <IntelPanel links={data.intelLinks} onClose={() => setIntelOpen(false)} />}
+      {intelOpen && data.intelLinks && (
+        <IntelPanel
+          links={data.intelLinks}
+          marketImpacts={data.marketImpacts}
+          onClose={() => setIntelOpen(false)}
+        />
+      )}
     </div>
   );
 }

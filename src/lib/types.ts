@@ -47,6 +47,16 @@ export interface IntelLink {
   source: string;
 }
 
+export interface MarketImpactAssessment {
+  id: string;
+  headline: string;
+  impact: string;
+  confidence: 'high' | 'medium' | 'low';
+  reasoning: string;
+  timestamp: string;
+  indices?: string;
+}
+
 export interface NewsSource {
   name: string;
   reliability: 'high' | 'medium';

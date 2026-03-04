@@ -24,18 +24,34 @@ export default function VideoPanel({ videos, isExpanded, onToggle }: VideoPanelP
 
   return (
     <div className={`
-      flex flex-col transition-all duration-500 ease-in-out
-      ${isExpanded ? 'w-80' : 'w-12'}
-      bg-[#0d1117]/90 border-l border-cyan-500/10
+      flex flex-col transition-all duration-300 ease-out
+      ${isExpanded ? 'w-80' : 'w-14'}
+      bg-[#0d1117]/95 border-l border-cyan-500/20
+      ${!isExpanded ? 'shadow-[-4px_0_12px_rgba(0,200,255,0.15)]' : ''}
     `}>
-      {/* Toggle tab */}
+      {/* Toggle tab — always clickable; pops out when minimized */}
       <button
         onClick={onToggle}
-        className="flex items-center gap-2 p-3 border-b border-cyan-500/10 hover:bg-white/5 transition-colors"
+        className={`
+          flex items-center justify-center gap-2 p-3 border-b border-cyan-500/10
+          transition-all min-h-[52px]
+          ${isExpanded
+            ? 'hover:bg-white/5'
+            : 'hover:bg-cyan-500/15 hover:border-cyan-500/30 bg-cyan-500/5'
+          }
+        `}
+        title={isExpanded ? 'Collapse Live Feeds' : 'Expand Live Feeds'}
       >
-        {isExpanded ? <ChevronRight size={16} className="text-cyan-400" /> : <Video size={16} className="text-cyan-400" />}
-        {isExpanded && (
-          <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">Live Feeds</span>
+        {isExpanded ? (
+          <>
+            <ChevronRight size={16} className="text-cyan-400" />
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">Live Feeds</span>
+          </>
+        ) : (
+          <>
+            <Video size={18} className="text-cyan-400" />
+            <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-wider">LIVE</span>
+          </>
         )}
       </button>
 
