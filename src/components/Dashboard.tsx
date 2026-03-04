@@ -10,9 +10,10 @@ import EventDetail from './EventDetail';
 import VideoPanel from './VideoPanel';
 import IntelPanel from './IntelPanel';
 import FocusPanel from './FocusPanel';
-import CriticalAlertToasts from './CriticalAlertToasts';
+import FeedSidebar from './FeedSidebar';
+import MarketPanel from './MarketPanel';
 import RegionFilter from './RegionFilter';
-import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning } from 'lucide-react';
+import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning, BarChart3 } from 'lucide-react';
 
 const Globe = dynamic(() => import('./Globe'), {
   ssr: false,
@@ -46,6 +47,7 @@ export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [sortOrder, setSortOrder] = useState<'newest' | 'severity'>('newest');
   const [intelOpen, setIntelOpen] = useState(false);
+  const [marketOpen, setMarketOpen] = useState(false);
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
   const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastFetchRef = useRef<number>(0);
@@ -120,6 +122,12 @@ export default function Dashboard() {
 
   const handleToggleIntel = useCallback(() => {
     setIntelOpen(v => !v);
+    setMarketOpen(false);
+  }, []);
+
+  const handleToggleMarket = useCallback(() => {
+    setMarketOpen(v => !v);
+    setIntelOpen(false);
   }, []);
 
   const handleCheckEvent = useCallback((event: ConflictEvent) => {
@@ -196,6 +204,17 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleToggleMarket}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all text-xs font-mono ${
+              marketOpen
+                ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-400'
+                : 'border-cyan-500/20 hover:bg-cyan-500/10 text-cyan-400'
+            }`}
+          >
+            <BarChart3 size={13} />
+            MARKET
+          </button>
           <button
             onClick={handleToggleIntel}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all text-xs font-mono ${
@@ -308,16 +327,21 @@ export default function Dashboard() {
           />
         )}
 
-        {/* Critical alerts (Iran war etc) — left of live feed, auto-dismiss 10s */}
-        <CriticalAlertToasts
+        {/* Critical alerts + market indicators — left of live feed */}
+        <FeedSidebar
           events={data.events}
-          onClick={(e) => { setSelectedEvent(e); setDetailEvent(e); }}
+          marketImpacts={data.marketImpacts}
+          onEventClick={(e) => { setSelectedEvent(e); setDetailEvent(e); }}
+          onMarketClick={handleToggleMarket}
         />
 
         <VideoPanel videos={data.videos} isExpanded={videoPanelOpen} onToggle={handleToggleVideoPanel} />
       </div>
 
       {detailEvent && <EventDetail event={detailEvent} onClose={() => setDetailEvent(null)} />}
+      {marketOpen && (
+        <MarketPanel marketImpacts={data.marketImpacts ?? []} onClose={() => setMarketOpen(false)} />
+      )}
       {intelOpen && data.intelLinks && (
         <IntelPanel
           links={data.intelLinks}
