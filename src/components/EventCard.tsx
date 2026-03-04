@@ -47,7 +47,7 @@ export default memo(function EventCard({ event, isSelected, onClick }: EventCard
     <div
       onClick={() => onClick(event)}
       className={`
-        relative p-3 rounded-lg border cursor-pointer transition-all duration-300
+        relative p-3 rounded-lg border cursor-pointer transition-all duration-300 touch-manipulation
         ${styles.border} ${styles.bg}
         ${isSelected ? 'ring-1 ring-cyan-400/50 bg-cyan-500/5' : 'hover:bg-white/[0.02]'}
       `}

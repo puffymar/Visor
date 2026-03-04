@@ -18,9 +18,10 @@ interface FeedSidebarProps {
   marketImpacts?: MarketImpactAssessment[];
   onEventClick: (event: ConflictEvent) => void;
   onMarketClick?: () => void;
+  className?: string;
 }
 
-export default function FeedSidebar({ events, marketImpacts = [], onEventClick, onMarketClick }: FeedSidebarProps) {
+export default function FeedSidebar({ events, marketImpacts = [], onEventClick, onMarketClick, className = '' }: FeedSidebarProps) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const shownIdsRef = useRef<Set<string>>(new Set());
 
@@ -62,7 +63,7 @@ export default function FeedSidebar({ events, marketImpacts = [], onEventClick, 
   const topMarket = marketImpacts[0];
 
   return (
-    <div className="flex flex-col gap-3 w-[220px] shrink-0 border-l border-cyan-500/20 bg-[#0a0e16]/80 backdrop-blur-md p-2">
+    <div className={`flex flex-col gap-3 w-[220px] md:w-[220px] shrink-0 border-l border-cyan-500/20 bg-[#0a0e16]/80 backdrop-blur-md p-2 ${className}`}>
       {/* Market indicators — always visible */}
       {topMarket && (
         <button

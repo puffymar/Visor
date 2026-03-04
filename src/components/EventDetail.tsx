@@ -27,7 +27,7 @@ export default function EventDetail({ event, onClose }: EventDetailProps) {
   }[event.severity];
 
   return (
-    <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-8">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8" style={{ paddingTop: 'max(1rem, env(safe-area-inset-top))', paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
       <div className="bg-[#0d1117] border border-cyan-500/20 rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl shadow-cyan-500/5">
         {/* Header */}
         <div className="flex items-start justify-between p-5 border-b border-white/5">

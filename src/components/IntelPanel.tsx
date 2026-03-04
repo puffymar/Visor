@@ -24,7 +24,7 @@ export default function IntelPanel({ links, marketImpacts = [], onClose }: Intel
   const [activeTab, setActiveTab] = useState<'intel' | 'market'>('intel');
 
   return (
-    <div className="fixed inset-y-0 right-0 w-[420px] bg-[#0a0e16]/98 border-l border-cyan-500/20 backdrop-blur-xl z-50 flex flex-col shadow-2xl shadow-black/50">
+    <div className="fixed inset-y-0 right-0 w-full md:w-[420px] max-w-full bg-[#0a0e16]/98 border-l border-cyan-500/20 backdrop-blur-xl z-50 flex flex-col shadow-2xl shadow-black/50">
       <div className="flex items-center justify-between px-4 py-3 border-b border-cyan-500/15 bg-[#0d1117]">
         <div className="flex items-center gap-2">
           <FileWarning size={16} className="text-amber-400" />

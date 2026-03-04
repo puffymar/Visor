@@ -17,9 +17,10 @@ interface VideoPanelProps {
   videos: VideoFeed[];
   isExpanded: boolean;
   onToggle: () => void;
+  className?: string;
 }
 
-export default function VideoPanel({ videos, isExpanded, onToggle }: VideoPanelProps) {
+export default function VideoPanel({ videos, isExpanded, onToggle, className = '' }: VideoPanelProps) {
   const [expandedVideo, setExpandedVideo] = useState<string | null>(null);
 
   return (
@@ -28,6 +29,7 @@ export default function VideoPanel({ videos, isExpanded, onToggle }: VideoPanelP
       ${isExpanded ? 'w-80' : 'w-14'}
       bg-[#0d1117]/95 border-l border-cyan-500/20
       ${!isExpanded ? 'shadow-[-4px_0_12px_rgba(0,200,255,0.15)]' : ''}
+      ${className}
     `}>
       {/* Toggle tab — always clickable; pops out when minimized */}
       <button

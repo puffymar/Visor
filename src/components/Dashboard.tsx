@@ -13,7 +13,7 @@ import FocusPanel from './FocusPanel';
 import FeedSidebar from './FeedSidebar';
 import MarketPanel from './MarketPanel';
 import RegionFilter from './RegionFilter';
-import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning, BarChart3 } from 'lucide-react';
+import { Shield, RefreshCw, Search, ChevronUp, ChevronDown, FileWarning, BarChart3, List, Globe2, Video } from 'lucide-react';
 
 const Globe = dynamic(() => import('./Globe'), {
   ssr: false,
@@ -49,6 +49,7 @@ export default function Dashboard() {
   const [intelOpen, setIntelOpen] = useState(false);
   const [marketOpen, setMarketOpen] = useState(false);
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [mobileTab, setMobileTab] = useState<'events' | 'globe' | 'live'>('events');
   const refreshTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastFetchRef = useRef<number>(0);
   const selectedEventRef = useRef<ConflictEvent | null>(null);
@@ -187,26 +188,34 @@ export default function Dashboard() {
   const criticalCount = data.intelLinks?.filter(l => l.severity === 'critical').length ?? 0;
 
   return (
-    <div className="h-screen flex flex-col bg-[#080b12] text-white overflow-hidden">
+    <div
+      className="h-[100dvh] flex flex-col bg-[#080b12] text-white overflow-hidden overflow-x-hidden max-w-[100vw]"
+      style={{
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
+        paddingLeft: 'env(safe-area-inset-left)',
+        paddingRight: 'env(safe-area-inset-right)',
+      }}
+    >
       {/* Top Bar */}
-      <header className="flex items-center justify-between px-4 py-2 bg-[#0a0e16] border-b border-cyan-500/10">
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Shield size={24} className="text-cyan-400" />
+      <header className="flex items-center justify-between px-3 md:px-4 py-2 bg-[#0a0e16] border-b border-cyan-500/10 shrink-0">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+          <div className="relative shrink-0">
+            <Shield size={22} className="text-cyan-400 md:w-6 md:h-6" />
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-wide">
+          <div className="min-w-0">
+            <h1 className="text-base md:text-lg font-bold tracking-wide truncate">
               <span className="text-cyan-400">VISOR</span>
-              <span className="text-gray-500 text-xs ml-2 font-mono">GLOBAL CONFLICT MONITOR</span>
+              <span className="text-gray-500 text-[10px] md:text-xs ml-1 md:ml-2 font-mono hidden sm:inline">GLOBAL CONFLICT MONITOR</span>
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2 shrink-0">
           <button
             onClick={handleToggleMarket}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all text-xs font-mono ${
+            className={`flex items-center gap-1 md:gap-1.5 px-1.5 md:px-3 py-1.5 rounded-md border transition-all text-[9px] md:text-xs font-mono min-h-[40px] md:min-h-0 ${
               marketOpen
                 ? 'border-emerald-400/40 bg-emerald-500/10 text-emerald-400'
                 : 'border-cyan-500/20 hover:bg-cyan-500/10 text-cyan-400'
@@ -217,7 +226,7 @@ export default function Dashboard() {
           </button>
           <button
             onClick={handleToggleIntel}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border transition-all text-xs font-mono ${
+            className={`flex items-center gap-1 md:gap-1.5 px-1.5 md:px-3 py-1.5 rounded-md border transition-all text-[9px] md:text-xs font-mono min-h-[40px] md:min-h-0 ${
               intelOpen
                 ? 'border-amber-400/40 bg-amber-500/10 text-amber-400'
                 : 'border-cyan-500/20 hover:bg-cyan-500/10 text-cyan-400'
@@ -231,12 +240,12 @@ export default function Dashboard() {
               </span>
             )}
           </button>
-          <span className="text-[10px] text-gray-500 font-mono" title="Refresh every 60s; +5 events every 4 min">60s · +5/4m</span>
+          <span className="text-[9px] text-gray-500 font-mono hidden sm:inline" title="Refresh every 60s; +5 events every 4 min">60s · +5/4m</span>
           <button
             onClick={() => fetchData(true)}
-            className={`p-1.5 rounded-md border border-cyan-500/20 hover:bg-cyan-500/10 transition-all ${isRefreshing ? 'animate-spin' : ''}`}
+            className={`p-2 rounded-md border border-cyan-500/20 hover:bg-cyan-500/10 transition-all min-w-[40px] min-h-[40px] md:min-w-0 md:min-h-0 flex items-center justify-center shrink-0 ${isRefreshing ? 'animate-spin' : ''}`}
           >
-            <RefreshCw size={14} className="text-cyan-400" />
+            <RefreshCw size={16} className="text-cyan-400 md:w-3.5 md:h-3.5" />
           </button>
         </div>
       </header>
@@ -244,10 +253,14 @@ export default function Dashboard() {
       <StatsBar stats={data.stats} isConnected={isConnected} onCriticalClick={handleCriticalClick} />
       <NewsTicker headlines={data.liveHeadlines} />
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Panel */}
-        <div className="w-96 flex flex-col border-r border-cyan-500/10 bg-[#0a0e16]/50">
-          <div className="p-3 space-y-2 border-b border-white/5">
+      <div className="flex-1 flex overflow-hidden min-h-0">
+        {/* Left Panel — full width on mobile when events tab */}
+        <div className={`
+          flex flex-col border-r border-cyan-500/10 bg-[#0a0e16]/50 min-w-0
+          w-full md:w-96
+          ${mobileTab !== 'events' ? 'hidden md:flex' : 'flex'}
+        `}>
+          <div className="p-2 md:p-3 space-y-2 border-b border-white/5">
             <div className="relative">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
@@ -255,7 +268,7 @@ export default function Dashboard() {
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 focus:ring-1 focus:ring-cyan-500/20 transition-all"
+                className="w-full pl-9 pr-3 py-2.5 md:py-2 bg-white/5 border border-white/10 rounded-lg text-base md:text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-cyan-500/30 focus:ring-1 focus:ring-cyan-500/20 transition-all"
               />
             </div>
             <RegionFilter selected={regionFilter} onChange={setRegionFilter} eventCounts={eventCounts} />
@@ -270,7 +283,7 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-2 md:p-3 space-y-2 custom-scrollbar overscroll-contain">
             {filteredEvents.map(event => (
               <EventCard
                 key={event.id}
@@ -282,11 +295,14 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Globe */}
-        <div className="flex-1 relative">
+        {/* Globe — full width on mobile when globe tab */}
+        <div className={`
+          flex-1 relative min-w-0
+          ${mobileTab !== 'globe' ? 'hidden md:block' : 'block'}
+        `}>
           <Globe events={data.events} onSelectEvent={handleSelectEvent} selectedEvent={selectedEvent} />
 
-          <div className="absolute top-4 right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-3 backdrop-blur-md">
+          <div className="absolute top-2 right-2 md:top-4 md:right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-2 md:p-3 backdrop-blur-md">
             <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1">Global Threat Level</div>
             <div className="flex items-center gap-2">
               <div className="flex gap-0.5">
@@ -305,7 +321,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="absolute bottom-4 right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-3 backdrop-blur-md">
+          <div className="absolute bottom-2 right-2 md:bottom-4 md:right-4 bg-[#0d1117]/80 border border-cyan-500/20 rounded-lg p-2 md:p-3 backdrop-blur-md hidden md:block">
             <div className="text-[10px] font-mono text-gray-500 uppercase tracking-wider mb-1.5">Active Sources</div>
             <div className="flex flex-wrap gap-1">
               {['Reuters', 'AP', 'BBC', 'Al Jazeera', 'Al Arabiya', 'ACLED', 'UN OCHA', 'ISW', 'CENTCOM'].map(s => (
@@ -317,26 +333,74 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Dedicated Focus / Check panel */}
+        {/* Dedicated Focus / Check panel — hidden on mobile (use detail modal) */}
         {selectedEvent && (
+          <div className="hidden md:block">
           <FocusPanel
             event={selectedEvent}
             onClose={() => setSelectedEvent(null)}
             checked={checkedIds.has(selectedEvent.id)}
             onCheck={() => handleCheckEvent(selectedEvent)}
           />
+          </div>
         )}
 
-        {/* Critical alerts + market indicators — left of live feed */}
+        {/* Critical alerts + market indicators — hidden on mobile */}
+        <div className="hidden md:block">
         <FeedSidebar
           events={data.events}
           marketImpacts={data.marketImpacts}
           onEventClick={(e) => { setSelectedEvent(e); setDetailEvent(e); }}
           onMarketClick={handleToggleMarket}
         />
+        </div>
 
-        <VideoPanel videos={data.videos} isExpanded={videoPanelOpen} onToggle={handleToggleVideoPanel} />
+        {/* Live tab content on mobile — FeedSidebar + videos stacked */}
+        <div className={`
+          flex flex-col md:hidden w-full min-w-0
+          ${mobileTab !== 'live' ? 'hidden' : 'flex'}
+        `}>
+          <div className="w-full shrink-0 overflow-x-auto">
+            <FeedSidebar
+              events={data.events}
+              marketImpacts={data.marketImpacts}
+              onEventClick={(e) => { setSelectedEvent(e); setDetailEvent(e); }}
+              onMarketClick={handleToggleMarket}
+              className="!w-full !border-l-0 border-b border-cyan-500/20"
+            />
+          </div>
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <VideoPanel videos={data.videos} isExpanded={true} onToggle={() => {}} className="!w-full !border-l-0 border-t border-cyan-500/20" />
+          </div>
+        </div>
+
+        <VideoPanel videos={data.videos} isExpanded={videoPanelOpen} onToggle={handleToggleVideoPanel} className="hidden md:flex" />
       </div>
+
+      {/* Mobile bottom tab bar */}
+      <nav className="md:hidden flex items-center justify-around py-2 px-4 bg-[#0a0e16] border-t border-cyan-500/10 shrink-0 safe-area-bottom">
+        <button
+          onClick={() => setMobileTab('events')}
+          className={`flex flex-col items-center gap-0.5 py-2 px-4 min-w-[72px] rounded-lg transition-colors ${mobileTab === 'events' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
+        >
+          <List size={22} />
+          <span className="text-[10px] font-mono">Events</span>
+        </button>
+        <button
+          onClick={() => setMobileTab('globe')}
+          className={`flex flex-col items-center gap-0.5 py-2 px-4 min-w-[72px] rounded-lg transition-colors ${mobileTab === 'globe' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
+        >
+          <Globe2 size={22} />
+          <span className="text-[10px] font-mono">Globe</span>
+        </button>
+        <button
+          onClick={() => setMobileTab('live')}
+          className={`flex flex-col items-center gap-0.5 py-2 px-4 min-w-[72px] rounded-lg transition-colors ${mobileTab === 'live' ? 'bg-cyan-500/15 text-cyan-400' : 'text-gray-500'}`}
+        >
+          <Video size={22} />
+          <span className="text-[10px] font-mono">Live</span>
+        </button>
+      </nav>
 
       {detailEvent && <EventDetail event={detailEvent} onClose={() => setDetailEvent(null)} />}
       {marketOpen && (

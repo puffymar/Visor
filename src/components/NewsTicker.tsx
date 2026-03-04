@@ -42,11 +42,11 @@ export default function NewsTicker({ headlines }: NewsTickerProps) {
   const doubled = [...headlines, ...headlines];
 
   return (
-    <div className="flex items-center bg-[#0a0e16] border-b border-cyan-500/10 overflow-hidden">
+    <div className="flex items-center bg-[#0a0e16] border-b border-cyan-500/10 overflow-hidden min-h-0 shrink-0">
       {/* Label */}
-      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/10 border-r border-red-500/20 shrink-0">
-        <AlertTriangle size={12} className="text-red-400" />
-        <span className="text-[10px] font-mono text-red-400 uppercase tracking-wider font-bold">Breaking</span>
+      <div className="flex items-center gap-1.5 px-2 md:px-3 py-1.5 bg-red-500/10 border-r border-red-500/20 shrink-0">
+        <AlertTriangle size={11} className="text-red-400 shrink-0 md:w-3 md:h-3" />
+        <span className="text-[9px] md:text-[10px] font-mono text-red-400 uppercase tracking-wider font-bold">Breaking</span>
       </div>
 
       {/* Scrolling ticker */}
@@ -54,7 +54,9 @@ export default function NewsTicker({ headlines }: NewsTickerProps) {
         ref={scrollRef}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        className="flex-1 overflow-hidden whitespace-nowrap py-1.5"
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+        className="flex-1 min-w-0 overflow-hidden whitespace-nowrap py-1.5"
       >
         <div className="inline-flex items-center gap-8">
           {doubled.map((h, i) => (
